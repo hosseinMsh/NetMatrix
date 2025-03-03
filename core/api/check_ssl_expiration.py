@@ -3,11 +3,9 @@ import warnings
 import socket
 from datetime import datetime, timezone
 from cryptography import x509
-
 from cryptography.hazmat.backends import default_backend
 
 # warnings.filterwarnings("ignore", category=DeprecationWarning, module="ssl")
-
 
 def check_ssl_expiration(domain, port=443):
     well_known_ports = [
@@ -35,7 +33,7 @@ def check_ssl_expiration(domain, port=443):
                     cert_der = ssl_sock.getpeercert(binary_form=True)
                     cert = x509.load_der_x509_certificate(cert_der, default_backend())
 
-            expiration_date = cert.not_valid_after.replace(tzinfo=timezone.utc)
+            expiration_date = cert.not_valid_after_utc
             days_until_expiration = (expiration_date - datetime.now(timezone.utc)).days
 
             san_extension = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
@@ -44,9 +42,9 @@ def check_ssl_expiration(domain, port=443):
             # Check support for lower SSL/TLS versions
             supported_versions = []
             for tls_version, protocol in [
-                ("TLSv1", ssl.PROTOCOL_TLSv1),
-                ("TLSv1.1", ssl.PROTOCOL_TLSv1_1),
-                ("TLSv1.2", ssl.PROTOCOL_TLSv1_2)
+                ("TLSv1", ssl.PROTOCOL_TLS_CLIENT),
+                ("TLSv1.1", ssl.PROTOCOL_TLS_CLIENT),
+                ("TLSv1.2", ssl.PROTOCOL_TLS_CLIENT)
             ]:
                 try:
                     tls_context = ssl.SSLContext(protocol)
@@ -72,6 +70,5 @@ def check_ssl_expiration(domain, port=443):
         except Exception as e:
             print(f"Could not retrieve the SSL certificate for {domain} on port {p}: {e}")
 
-
 # Example usage
-check_ssl_expiration("edu.sharif.edu")
+check_ssl_expiration(domain="captcha.sharif.ir")
