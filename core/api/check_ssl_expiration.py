@@ -71,4 +71,4 @@ def check_ssl_expiration(domain, port=443):
             print(f"Could not retrieve the SSL certificate for {domain} on port {p}: {e}")
 
 # Example usage
-check_ssl_expiration(domain="captcha.sharif.ir")
+check_ssl_expiration(domain="sharif.ir")

@@ -4,7 +4,7 @@ DEFAULT_PORTS = [20, 21, 22, 23, 25, 53, 67, 68, 80, 110, 143, 161, 194, 443, 46
                  7993, 8080, 8443, 9000, 11211, 27017, 6379]
 
 
-def scan_ports(ip_address, start_port=None, end_port=None, use_default=False):
+def scan_ports(ip_address, start_port=None, end_port=None, use_default=True):
     if not ip_address:
         print("Usage: scan_ports(<IP_ADDRESS>, start_port=<START_PORT>, end_port=<END_PORT>, use_default=<True/False>)")
         return
@@ -33,4 +33,4 @@ def scan_ports(ip_address, start_port=None, end_port=None, use_default=False):
 
 # مثال استفاده
 scan_ports("172.26.137.182", start_port=20, end_port=25)
-scan_ports("172.26.137.182", use_default=True)
+scan_ports("172.26.137.182")
