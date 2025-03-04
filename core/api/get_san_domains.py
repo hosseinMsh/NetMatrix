@@ -3,7 +3,7 @@ import socket
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
-
+#gets all domains from one input domain or IP Address
 def get_san_domains(domain, port=443, print_domains=False):
     """
     Retrieves the Subject Alternative Names (SAN) from the SSL certificate
@@ -38,6 +38,6 @@ def get_san_domains(domain, port=443, print_domains=False):
 
 
 if __name__ == "__main__":
-    target_domain = "www.lichess.org"  # Change to your target domain
+    target_domain = "8.8.8.8"  # Change to your target domain
     # Call the function with print_domains=True to print the retrieved domains.
     san_domains = get_san_domains(target_domain, print_domains=True)
