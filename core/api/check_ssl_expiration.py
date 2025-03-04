@@ -5,7 +5,16 @@ from datetime import datetime, timezone
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
-# warnings.filterwarnings("ignore", category=DeprecationWarning, module="ssl")
+
+# SSL Expiry,version and ports function
+# Finds All other domains in the same IP Address from the given domain and returns the properties above
+def log_warnings(message, category, filename, lineno, file=None, line=None):
+    with open("ssl_warnings.log", "a") as log_file:
+        log_file.write(f"{category.__name__}: {message} (File: {filename}, Line: {lineno})\n")
+
+
+warnings.showwarning = log_warnings  # Redirect warnings to the log file
+
 
 def check_ssl_expiration(domain, port=443):
     well_known_ports = [
@@ -33,7 +42,7 @@ def check_ssl_expiration(domain, port=443):
                     cert_der = ssl_sock.getpeercert(binary_form=True)
                     cert = x509.load_der_x509_certificate(cert_der, default_backend())
 
-            expiration_date = cert.not_valid_after_utc
+            expiration_date = cert.not_valid_after.replace(tzinfo=timezone.utc)
             days_until_expiration = (expiration_date - datetime.now(timezone.utc)).days
 
             san_extension = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
@@ -42,9 +51,9 @@ def check_ssl_expiration(domain, port=443):
             # Check support for lower SSL/TLS versions
             supported_versions = []
             for tls_version, protocol in [
-                ("TLSv1", ssl.PROTOCOL_TLS_CLIENT),
-                ("TLSv1.1", ssl.PROTOCOL_TLS_CLIENT),
-                ("TLSv1.2", ssl.PROTOCOL_TLS_CLIENT)
+                ("TLSv1", ssl.PROTOCOL_TLSv1),
+                ("TLSv1.1", ssl.PROTOCOL_TLSv1_1),
+                ("TLSv1.2", ssl.PROTOCOL_TLSv1_2)
             ]:
                 try:
                     tls_context = ssl.SSLContext(protocol)
@@ -70,5 +79,8 @@ def check_ssl_expiration(domain, port=443):
         except Exception as e:
             print(f"Could not retrieve the SSL certificate for {domain} on port {p}: {e}")
 
+
 # Example usage
-check_ssl_expiration(domain="sharif.ir")
+check_ssl_expiration("www.lichess.org")
+#check_ssl_expiration("172.26.137.192")
+
