@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
+from core.api.get_san_domains import get_san_domains  # Import the function from the first code
 
-# SSL Expiry,version and ports function
-# Finds All other domains in the same IP Address from the given domain and returns the properties above
+
 def log_warnings(message, category, filename, lineno, file=None, line=None):
     with open("ssl_warnings.log", "a") as log_file:
         log_file.write(f"{category.__name__}: {message} (File: {filename}, Line: {lineno})\n")
@@ -45,8 +45,8 @@ def check_ssl_expiration(domain, port=443):
             expiration_date = cert.not_valid_after.replace(tzinfo=timezone.utc)
             days_until_expiration = (expiration_date - datetime.now(timezone.utc)).days
 
-            san_extension = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
-            domains = san_extension.value.get_values_for_type(x509.DNSName)
+            # Replace manual extraction with a call to get_san_domains:
+            domains = get_san_domains(domain, p)
 
             # Check support for lower SSL/TLS versions
             supported_versions = []
@@ -82,5 +82,3 @@ def check_ssl_expiration(domain, port=443):
 
 # Example usage
 check_ssl_expiration("www.lichess.org")
-#check_ssl_expiration("172.26.137.192")
-
