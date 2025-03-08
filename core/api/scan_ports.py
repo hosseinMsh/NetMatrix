@@ -1,7 +1,6 @@
 import socket
 
-DEFAULT_PORTS = [20, 21, 22, 23, 25, 53, 67, 68, 80, 110, 143, 161, 194, 443, 465, 587, 993, 995, 3306, 3389, 5432,
-                 7993, 8080, 8443, 9000, 11211, 27017, 6379]
+from core.api.utilities import DEFAULT_PORTS
 
 
 def scan_ports(ip_address, start_port=None, end_port=None, use_default=True):
@@ -32,5 +31,5 @@ def scan_ports(ip_address, start_port=None, end_port=None, use_default=True):
 
 
 # مثال استفاده
-scan_ports("172.26.137.182", start_port=20, end_port=25)
-scan_ports("172.26.137.182")
+scan_ports("81.31.170.182", start_port=20, end_port=25)
+scan_ports("81.31.170.182")
